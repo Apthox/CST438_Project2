@@ -7,6 +7,8 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+var MySQL_controller = require('./controllers/MySQL');
+
 var app = express();
 
 // view engine setup
@@ -42,9 +44,9 @@ if (process.argv.length > 2) {
     let arguement = process.argv[2];
     if (arguement == "dev") {
         console.log("Connecting to local development database");
-    } else {
-        console.log("connecting to remote database");
     }
+} else {
+    MySQL_controller.connectToRemoteDatabase();
 }
 
 module.exports = app;
