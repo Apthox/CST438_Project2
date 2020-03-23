@@ -1,3 +1,0 @@
-TITLE:"Calculus Book"
-DESC:"a book to learn calculus"
-PRICE:50
