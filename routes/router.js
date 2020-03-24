@@ -1,5 +1,6 @@
 var express = require('express');
 var mysql = require('mysql');
+var session = require('express-session');
 var router = express.Router();
 
 /* GET home page. */
@@ -28,8 +29,55 @@ router.get('/register', function(req, res, next) {
 });
 
 router.post('/register', async function(req, res, next) {
-    let rows = await registerUser(req.body);
+    let message = "User WAS NOT added to the database!";   
+    let successful = false;
+    console.log(req.body);
+    if (req.body.username == '' ||
+           req.body.password == '' ||
+           req.body.age == '') {
+      message = "Some fields are empty";
+  }
 
+    else if (isNaN(req.body.age) || parseInt(req.body.age) < 21 || parseInt(req.body.age) > 99) {
+      message = "Invalid age";
+  }
+  
+  
+    // Call sql checks
+    else {
+        let checkUsername = await registrationCheckUsername(req.body);
+        
+        if (checkUsername[0].cnt > 0) {
+          message = "Username already exists";
+        }
+      
+      
+      else {
+          console.log("req.body: ", req.body);
+          let rows = await registerUser(req.body);
+          if (rows.affectedRows > 0) {
+              let rows = await loginUser(req.body);
+              if (rows.length > 0) {
+                if (rows[0].password == req.body.password &&
+                    rows[0].username == req.body.username) {
+                        req.session.username = rows[0].username;
+                        req.session.email = rows[0].email;
+                }
+            }
+          }
+      }
+     
+    }
+
+    res.json({
+        successful: successful,
+        message: message
+    });
+
+});
+
+router.get('/products', function(req, res, next) {
+  res.render('products', { title: 'Products' });
 });
 
 /* GET users listing. */
@@ -80,6 +128,31 @@ function loginUser(body){
               resolve(rows);
            });
 
+        });
+    });
+}
+
+// checks if username is valid
+function registrationCheckUsername(body){
+   
+   let conn = dbConnection();
+    
+    return new Promise(function(resolve, reject){
+        conn.connect(function(err) {
+           if (err) throw err;
+          console.log("RegistrationCheckUsername Connected!");
+        
+           let sql = `SELECT COUNT(username) AS cnt
+                      FROM user
+                      WHERE username = ? 
+                      `;
+        
+           conn.query(sql, [body.username], function (err, rows, fields) {
+              if (err) throw err;
+              conn.end();
+              resolve(rows);
+           });
+        
         });
     });
 }
