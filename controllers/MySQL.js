@@ -11,6 +11,21 @@ module.exports.connectToRemoteDatabase = function() {
 
     con.connect(function(err) {
         if (err) throw err;
-        console.log("Connected!");
+        console.log("Connected to remote!");
+    });
+}
+
+module.exports.connectToLocalDatabase = function() {
+    var con = mysql.createConnection({
+        host: "localhost",
+        user: "root",
+        password: "root",
+        port: 3306,
+        database: "project2"
+    });
+
+    con.connect(function(err) {
+        if (err) throw err;
+        console.log("Connected to local!");
     });
 }
