@@ -81,11 +81,51 @@
 
 .back {
     transform: rotateY(180deg);
-    background-color: green;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
 }
 
 .flip-container:hover .flipper,
 .flip-container.hover .flipper,
 .flip-container.flip .flipper {
     transform: rotateY(180deg);
+}
+
+.ticker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    width: fit-content;
+}
+
+.ticker>input {
+    text-align: center;
+}
+
+.tick {
+    height: 100%;
+    background-color: white;
+    width: 27px;
+    padding: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+}
+
+.quantity-input {
+    width: 100px;
+}
+
+.price-est {
+    font-family: sans-serif;
+    font-size: x-large;
+}
+
+.price {
+    color: green;
 }
