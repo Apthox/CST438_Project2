@@ -3,6 +3,10 @@ var mysql = require('mysql');
 var session = require('express-session');
 var router = express.Router();
 
+router.get('/cart', function(req, res, next) {
+    res.render('cart', { title: 'Cart' });
+});
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     let login = "Login";
