@@ -1,0 +1,96 @@
+div.a {
+    text-align: center;
+    font-size: 3em;
+}
+
+h1.txt {
+    text-align: center;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+div.col-lg-3 {
+    margin-top: 40;
+}
+
+div.b {
+    margin-top: 40;
+    width: 800;
+    padding: 20;
+}
+
+
+/*CSS for the order history*/
+
+.panel-order .row {
+    border-bottom: 1px solid #ccc;
+}
+
+.panel-order .row:last-child {
+    border: 0px;
+}
+
+.panel-order .row .col-md-1 {
+    text-align: center;
+    padding-top: 15px;
+}
+
+.panel-order .row .col-md-1 img {
+    width: 50px;
+    max-height: 50px;
+}
+
+.panel-order .row .row {
+    border-bottom: 0;
+}
+
+.panel-order .row .col-md-11 {
+    border-left: 1px solid #ccc;
+}
+
+.panel-order .row .row .col-md-12 {
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+
+.panel-order .row .row .col-md-12:last-child {
+    font-size: 11px;
+    color: #555;
+    background: #EFEFEF;
+}
+
+.panel-order .btn-group {
+    margin: 0px;
+    padding: 0px;
+}
+
+.panel-order .panel-body {
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-top: 50;
+}
+
+.panel-order .panel-deading {
+    margin-bottom: 0;
+}
+
+.panel-order .panel-default {
+    margin-top: 100;
+}
+
+.content-container {
+    background-color: white;
+    border-radius: 4px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+}

@@ -1,6 +1,7 @@
 <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel='stylesheet' href='/stylesheets/style.css' />
 <!------ Include the above in your HEAD tag ---------->
 
 <div class="wrapper fadeInDown">
@@ -19,56 +20,56 @@
         <input type="text" id="age" class="fadeIn third" name="age" placeholder="age">
       </div>
       <div class="form-group">
-            <button type="submit" id="loginButton" class="btn btn-primary btn-block">Register</button>
-        </div>
+        <button type="submit" id="loginButton" class="btn btn-primary btn-block">Register</button>
+      </div>
     </form>
 
     <!-- Remind Passowrd -->
     <div id="formFooter">
       <a class="underlineHover" href="/login">Already registered? Login</a>
-      <div class ="alert alert-danger" role="alert" id="message"></div><br>
+      <div class="alert alert-danger" role="alert" id="message"></div><br>
     </div>
 
   </div>
 </div>
 
 <script>
-	/* global $ */
-	$(document).ready(function() {
-  	$("#message").hide();
-          $('#loginButton').on('click', function(e) {
-          	e.preventDefault();
-              $.ajax({
-                  type: "POST",
-                  url: "/register",
-                  dataType: "json",
-                  contentType: "application/json",
-                  data: JSON.stringify({
-                      "username": $("#username").val(),
-                      "password": $("#password").val(),
-                      "age": $("#age").val()
-                  }),
-                  success: function(result, status) {
-                      console.log("Status:", result);
-                      if (result.successful) {
-                          window.location.href = '/';
-                          console.log("username:", username);
-                      }
-                      else {
-                          $('#message').html(result.message);
-                          $('#message').show();
+  /* global $ */
+  $(document).ready(function () {
+    $("#message").hide();
+    $('#loginButton').on('click', function (e) {
+      e.preventDefault();
+      $.ajax({
+        type: "POST",
+        url: "/register",
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({
+          "username": $("#username").val(),
+          "password": $("#password").val(),
+          "age": $("#age").val()
+        }),
+        success: function (result, status) {
+          console.log("Status:", result);
+          if (result.successful) {
+            window.location.href = '/';
+            console.log("username:", username);
+          }
+          else {
+            $('#message').html(result.message);
+            $('#message').show();
 
-                      }
-                  },
-                  error: function(xhr, status, error) {
-                      err = eval("error: (" + xhr.responseText + ")");
-                      console.error(err);
-                  },
-                  complete: function(data, status) { //optional, used for debugging purposes
-                      console.log(status);
-                  }
-              });
-  	
-  	});
-});
+          }
+        },
+        error: function (xhr, status, error) {
+          err = eval("error: (" + xhr.responseText + ")");
+          console.error(err);
+        },
+        complete: function (data, status) { //optional, used for debugging purposes
+          console.log(status);
+        }
+      });
+
+    });
+  });
 </script>

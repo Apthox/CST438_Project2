@@ -10,11 +10,11 @@ router.get('/', function(req, res, next) {
     let user = "Stranger";
     if (req.session && req.session.username && req.session.username.length) {
         login = "Logout",
-        logLink = "/logout",
-        user = req.session.username;
+            logLink = "/logout",
+            user = req.session.username;
 
     }
-    res.render('index', { 
+    res.render('index', {
         login: login,
         logLink: logLink,
         user: user
@@ -22,17 +22,17 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/login', function(req, res, next) {
-  res.render('login', { title: 'Login' });
+    res.render('login', { title: 'Login' });
 });
 
 router.post('/login', async function(req, res, next) {
-    
+
     let successful = false;
     let rows = await loginUser(req.body);
-    
+
     if (rows.length > 0) {
         if (rows[0].password == req.body.password &&
-        rows[0].username == req.body.username) {
+            rows[0].username == req.body.username) {
             successful = true;
             req.session.username = rows[0].username;
         }
@@ -54,48 +54,43 @@ router.get('/logout', async function(req, res, next) {
 
 
 router.get('/register', function(req, res, next) {
-  res.render('register', { title: 'Register' });
+    res.render('register', { title: 'Register' });
 });
 
 router.post('/register', async function(req, res, next) {
-    let message = "User WAS NOT added to the database!";   
+    let message = "User WAS NOT added to the database!";
     let successful = false;
     console.log(req.body);
     if (req.body.username == '' ||
-           req.body.password == '' ||
-           req.body.age == '') {
-      message = "Some fields are empty";
-  }
+        req.body.password == '' ||
+        req.body.age == '') {
+        message = "Some fields are empty";
+    } else if (isNaN(req.body.age) || parseInt(req.body.age) < 21 || parseInt(req.body.age) > 99) {
+        message = "Invalid age";
+    }
 
-    else if (isNaN(req.body.age) || parseInt(req.body.age) < 21 || parseInt(req.body.age) > 99) {
-      message = "Invalid age";
-  }
-  
-  
+
     // Call sql checks
     else {
         let checkUsername = await registrationCheckUsername(req.body);
-        
+
         if (checkUsername[0].cnt > 0) {
-          message = "Username already exists";
-        }
-      
-      
-      else {
-          console.log("req.body: ", req.body);
-          let rows = await registerUser(req.body);
-          if (rows.affectedRows > 0) {
-              let rows = await loginUser(req.body);
-              if (rows.length > 0) {
-                if (rows[0].password == req.body.password &&
-                    rows[0].username == req.body.username) {
+            message = "Username already exists";
+        } else {
+            console.log("req.body: ", req.body);
+            let rows = await registerUser(req.body);
+            if (rows.affectedRows > 0) {
+                let rows = await loginUser(req.body);
+                if (rows.length > 0) {
+                    if (rows[0].password == req.body.password &&
+                        rows[0].username == req.body.username) {
                         req.session.username = rows[0].username;
                         req.session.email = rows[0].email;
+                    }
                 }
             }
-          }
-      }
-     
+        }
+
     }
 
     res.json({
@@ -105,108 +100,92 @@ router.post('/register', async function(req, res, next) {
 
 });
 
-
-/* GET profile page. */
-router.get('/profile', async function(req, res, next) {
-    if (req.session && req.session.username && req.session.username.length) {
-        let pets = await registrationCheckUsername(req.session.username);
-        res.render('profile', { 
-            username: req.session.username,
-            login : "Logout",
-            logLink : "/logout",
-        });
-    }
-    else {
-        res.redirect('/login');
-    }
-});
-
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+    res.send('respond with a resource');
 });
 
-function registerUser(body){
+function registerUser(body) {
     let conn = dbConnection();
 
-    return new Promise(function(resolve, reject){
+    return new Promise(function(resolve, reject) {
         conn.connect(function(err) {
-          if (err) throw err;
-          let sql = `INSERT INTO user
+            if (err) throw err;
+            let sql = `INSERT INTO user
                       (username, password, 
                       age)
                       VALUES(?, ?, ?)
                         `;
-          let params = [body.username, body.password, body.age]; 
-           
-          conn.query(sql, params, function (err, rows, fields) {
-              if (err) 
-                throw err;
-              conn.end();
-              resolve(rows);
-          });
+            let params = [body.username, body.password, body.age];
+
+            conn.query(sql, params, function(err, rows, fields) {
+                if (err)
+                    throw err;
+                conn.end();
+                resolve(rows);
+            });
         });
     });
 }
 
-function loginUser(body){
-   
-   let conn = dbConnection();
-   
-    return new Promise(function(resolve, reject){
+function loginUser(body) {
+
+    let conn = dbConnection();
+
+    return new Promise(function(resolve, reject) {
         conn.connect(function(err) {
-           if (err) throw err;
-           let sql = `SELECT * 
+            if (err) throw err;
+            let sql = `SELECT * 
                     FROM user
                     WHERE username = ? 
                          `;
-           let params = [body.username];
-           
-           conn.query(sql, params, function (err, rows, fields) {
-              if (err) 
-                throw err;
-              conn.end();
-              resolve(rows);
-           });
+            let params = [body.username];
+
+            conn.query(sql, params, function(err, rows, fields) {
+                if (err)
+                    throw err;
+                conn.end();
+                resolve(rows);
+            });
 
         });
     });
 }
 
 // checks if username is valid
-function registrationCheckUsername(body){
-   
-   let conn = dbConnection();
-    
-    return new Promise(function(resolve, reject){
+function registrationCheckUsername(body) {
+
+    let conn = dbConnection();
+
+    return new Promise(function(resolve, reject) {
         conn.connect(function(err) {
-           if (err) throw err;
-          console.log("RegistrationCheckUsername Connected!");
-        
-           let sql = `SELECT COUNT(username) AS cnt
+            if (err) throw err;
+            console.log("RegistrationCheckUsername Connected!");
+
+            let sql = `SELECT COUNT(username) AS cnt
                       FROM user
                       WHERE username = ? 
                       `;
-        
-           conn.query(sql, [body.username], function (err, rows, fields) {
-              if (err) throw err;
-              conn.end();
-              resolve(rows);
-           });
-        
+
+            conn.query(sql, [body.username], function(err, rows, fields) {
+                if (err) throw err;
+                conn.end();
+                resolve(rows);
+            });
+
         });
     });
 }
 
-function dbConnection(){
+function dbConnection() {
 
-   let conn = mysql.createConnection({
-            host: "kil9uzd3tgem3naa.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
-            user: "pd0stonvt3jvcqr3",
-            password: "cmvrezgw7g06r89j",
-            port: 3306,
-            database: "yh53y6e2dlt78gnx"
-       }); //createConnection
+    let conn = mysql.createConnection({
+        host: "kil9uzd3tgem3naa.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+        user: "pd0stonvt3jvcqr3",
+        password: "cmvrezgw7g06r89j",
+        port: 3306,
+        database: "yh53y6e2dlt78gnx"
+    }); //createConnection
 
     return conn;
 }
