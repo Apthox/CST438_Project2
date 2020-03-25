@@ -105,8 +105,20 @@ router.post('/register', async function(req, res, next) {
 
 });
 
-router.get('/products', function(req, res, next) {
-  res.render('products', { title: 'Products' });
+
+/* GET profile page. */
+router.get('/profile', async function(req, res, next) {
+    if (req.session && req.session.username && req.session.username.length) {
+        let pets = await registrationCheckUsername(req.session.username);
+        res.render('profile', { 
+            username: req.session.username,
+            login : "Logout",
+            logLink : "/logout",
+        });
+    }
+    else {
+        res.redirect('/login');
+    }
 });
 
 /* GET users listing. */
