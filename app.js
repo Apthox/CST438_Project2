@@ -7,8 +7,12 @@ var session = require('express-session');
 
 
 
+
 var MySQL_controller = require('./controllers/MySQL');
 var theRouter = require('./routes/router');
+var indexRouter = require('./routes/index');
+var usersRouter = require('./routes/users');
+var apiRouter = require('./routes/api');
 
 var app = express();
 
@@ -26,8 +30,11 @@ app.use(session({
   secret: '6wOBwJBStY'
 }));
 
-
+// TODO: Resolve the router situation
 app.use('/', theRouter);
+//app.use('/', indexRouter);
+app.use('/users', usersRouter);
+app.use('/API', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -49,8 +56,6 @@ if (process.argv.length > 2) {
     let arguement = process.argv[2];
     if (arguement == "dev") {
         console.log("Connecting to local development database");
-    } else {
-        console.log("connecting to remote database");
     }
 } else {
     MySQL_controller.connectToRemoteDatabase();
