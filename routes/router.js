@@ -5,7 +5,20 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Homepage' });
+    let login = "Login";
+    let logLink = "/login";
+    let user = "Stranger";
+    if (req.session && req.session.username && req.session.username.length) {
+        login = "Logout",
+        logLink = "/logout",
+        user = req.session.username;
+
+    }
+    res.render('index', { 
+        login: login,
+        logLink: logLink,
+        user: user
+    });
 });
 
 router.get('/login', function(req, res, next) {
@@ -15,12 +28,28 @@ router.get('/login', function(req, res, next) {
 router.post('/login', async function(req, res, next) {
     
     let successful = false;
-    console.log(req.body);
     let rows = await loginUser(req.body);
     
+    if (rows.length > 0) {
+        if (rows[0].password == req.body.password &&
+        rows[0].username == req.body.username) {
+            successful = true;
+            req.session.username = rows[0].username;
+        }
+    }
+
     res.json({
         successful: successful
     });
+});
+
+router.get('/logout', async function(req, res, next) {
+
+    if (req.session && req.session.username && req.session.username.length) {
+        delete req.session.username;
+        res.redirect("/");
+    }
+
 });
 
 
