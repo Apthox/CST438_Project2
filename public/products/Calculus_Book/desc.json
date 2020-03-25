@@ -1,5 +1,5 @@
 {
-    "TITLE": "Calculus Book",
-    "DESC" : "A Calculus book",
-    "PRICE": 50
+    "TITLE":"Calculus Book",
+    "DESC":"a book to learn calculus",
+    "PRICE":50 
 }
